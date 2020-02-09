@@ -74,7 +74,14 @@ const apolloClient = new ApolloClient({
 })
 
 const apolloProvider = new VueApollo({
-  defaultClient: apolloClient
+  defaultClient: apolloClient,
+  errorHandler(error) {
+    console.log(
+      '%cError',
+      'background: red; color: white; padding: 2px 4px; border-radius: 3px; font-weight: bold;',
+      error.message
+    )
+  }
 })
 
 // install the vue plugin

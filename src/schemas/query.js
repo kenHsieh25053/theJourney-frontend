@@ -15,6 +15,10 @@ export const GET_USERPROFILE = gql`
         username
         email
         position
+        countries
+        cities
+        touristSpots
+        headshot
         profile
         createdAt
         updatedAt

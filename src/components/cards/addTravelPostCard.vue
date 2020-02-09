@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mx-auto">
+  <v-card class="mx-auto" min-width="660">
     <v-card-actions>
       <v-card-title>
         開始記錄你的每段旅程吧！

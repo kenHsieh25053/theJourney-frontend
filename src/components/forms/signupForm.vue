@@ -42,7 +42,7 @@
           />
         </v-col>
         <v-col>
-          <v-btn color="primary" :loading="loading" dark @click="signup">
+          <v-btn color="primary" :loading="loading" block @click="signup">
             Signup
           </v-btn>
         </v-col>
@@ -58,17 +58,9 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
+// import gql from 'graphql-tag'
 import Alert from '../alert'
-
-const USER_SIGNUP = gql`
-  mutation Signup($email: String!, $username: String!, $password: String!) {
-    signup(email: $email, username: $username, password: $password) {
-      status
-      message
-    }
-  }
-`
+import { USER_SIGNUP } from '@/schemas/mutaion.js'
 
 export default {
   name: 'SignupForm',

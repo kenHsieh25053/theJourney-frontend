@@ -3,31 +3,30 @@
     <v-list-item>
       <v-list-item-avatar color="grey" />
       <v-list-item-content>
-        <v-list-item-title class="headline">
-          {{ userProfile.username }}
-        </v-list-item-title>
+        <v-list-item-title class="headline">{{
+          userProfile.username
+        }}</v-list-item-title>
         <v-list-item-subtitle>旅遊新手</v-list-item-subtitle>
       </v-list-item-content>
     </v-list-item>
     <v-divider />
     <v-list-item>
       <v-list-item-content>
-        <v-list-item-title class="headline">
-          {{ userProfile.countries }}
-        </v-list-item-title>
+        <v-list-item-title class="headline">{{
+          userProfile.countries
+        }}</v-list-item-title>
         <v-list-item-subtitle>國家</v-list-item-subtitle>
       </v-list-item-content>
-
       <v-list-item-content>
-        <v-list-item-title class="headline">
-          {{ userProfile.cities }}
-        </v-list-item-title>
+        <v-list-item-title class="headline">{{
+          userProfile.cities
+        }}</v-list-item-title>
         <v-list-item-subtitle>城市</v-list-item-subtitle>
       </v-list-item-content>
       <v-list-item-content>
-        <v-list-item-title class="headline">
-          {{ userProfile.touristSpots }}
-        </v-list-item-title>
+        <v-list-item-title class="headline">{{
+          userProfile.touristSpots
+        }}</v-list-item-title>
         <v-list-item-subtitle>景點</v-list-item-subtitle>
       </v-list-item-content>
     </v-list-item>
@@ -42,27 +41,8 @@
 
 <script>
 import Alert from '../alert'
-import gql from 'graphql-tag'
-const GET_USERPROFILE = gql`
-  query userProfile {
-    userProfile {
-      status
-      message
-      userProfile {
-        id
-        username
-        email
-        position
-        profile
-        countries
-        cities
-        touristSpots
-        createdAt
-        updatedAt
-      }
-    }
-  }
-`
+import { GET_USERPROFILE } from '@/schemas/query.js'
+
 export default {
   name: 'PersonalInfoCard',
   components: {

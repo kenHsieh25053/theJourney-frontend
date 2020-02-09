@@ -17,7 +17,7 @@ export const USER_LOGIN = gql`
 
 export const USER_SIGNUP = gql`
   mutation signup($email: String!, $username: String!, $password: String!) {
-    signup(email: $email, username: $username:, password: $password) {
+    signup(email: $email, username: $username, password: $password) {
       status
       message
     }
@@ -25,24 +25,26 @@ export const USER_SIGNUP = gql`
 `
 
 export const POST_USERPROFILE = gql`
-  mutation userProfilePost {
-    userProfilePost($username: String!, $email: String!, $profile: String) {
-      userProfilePost(username: $username, email: $email, profile: $profile) {
-        status
-        message
-        userProfile {
-          id
-          username 
-          password 
-          email 
-          position 
-          countries
-          cities
-          headshot 
-          profile 
-          createdAt 
-          updatedAt 
-        }
+  mutation userProfilePost(
+    $username: String!
+    $email: String!
+    $profile: String
+  ) {
+    userProfilePost(username: $username, email: $email, profile: $profile) {
+      status
+      message
+      userProfile {
+        id
+        username
+        password
+        email
+        position
+        countries
+        cities
+        headshot
+        profile
+        createdAt
+        updatedAt
       }
     }
   }
@@ -72,6 +74,7 @@ export const POST_TRAVELLISTPOST = gql`
     $stayTo: String!
     $transportation: String
     $review: String
+    $countries: [String]
     $permissions: String!
   ) {
     travelListPost(
@@ -83,6 +86,7 @@ export const POST_TRAVELLISTPOST = gql`
       stayTo: $stayTo
       transportation: $transportation
       review: $review
+      countries: $countries
       permissions: $permissions
     ) {
       status
@@ -102,6 +106,7 @@ export const POST_TRAVELLISTPOST = gql`
         permissions
         transportation
         review
+        countries
         createdAt
         updatedAt
         userId
@@ -120,9 +125,6 @@ export const POST_TRAVELLISTPOST = gql`
           createdAt
           updatedAt
           travelListId
-          # touristSpots {
-
-          # }
         }
       }
     }
@@ -130,7 +132,7 @@ export const POST_TRAVELLISTPOST = gql`
 `
 
 export const POST_TRAVELLISTDELETE = gql`
-  mutation travelListDelete(id: ID!) {
+  mutation travelListDelete($id: ID!) {
     travelListDelete(id: $id) {
       status
       message
@@ -139,22 +141,23 @@ export const POST_TRAVELLISTDELETE = gql`
 `
 export const POST_CITYPOST = gql`
   mutation cityPost(
-    $id: ID,
-    $name: String!,
-    $stayFrom: String!,
-    $stayTo: String!,
-    $transportation: String,
-    $review: String,
-    $travelListId: ID!,
+    $id: ID
+    $name: String!
+    $stayFrom: String!
+    $stayTo: String!
+    $transportation: String
+    $review: String
+    $travelListId: ID!
   ) {
     cityPost(
-    id: $id, 
-    name: $name, 
-    stayFrom: $stayFrom:, 
-    stayTo: $stayTo, 
-    transportation: $transportation, 
-    review: $review, 
-    travelListId: $travelListId) {
+      id: $id
+      name: $name
+      stayFrom: $stayFrom
+      stayTo: $stayTo
+      transportation: $transportation
+      review: $review
+      travelListId: $travelListId
+    ) {
       status
       message
       cities {
@@ -176,14 +179,14 @@ export const POST_CITYPOST = gql`
           id
           name
           type
-          longtitude 
-          latitude 
+          longtitude
+          latitude
           days
           costs
           rates
-          transportation 
-          review 
-          photo_url 
+          transportation
+          review
+          photo_url
           createdAt
           updatedAt
           cityId
@@ -315,7 +318,12 @@ export const POST_FRIENDACTIONS = gql`
 export const POST_LIKE = gql`
   mutation like($id: ID!, $authorId: ID!, $type: String!) {
     like(id: $id, authorId: $authorId, type: $type) {
-
+      status
+      message
+      likes {
+        id
+        liked
+      }
     }
   }
 `

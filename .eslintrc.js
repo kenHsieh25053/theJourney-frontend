@@ -1,10 +1,5 @@
 module.exports = {
-  extends: [
-    'plugin:vue/recommended',
-    'plugin:vue/recommended',
-    '@vue/standard',
-    'eslint-config-prettier'
-  ],
+  extends: ['plugin:vue/base', 'eslint-config-prettier'],
   plugins: ['eslint-plugin-prettier'],
   parserOptions: {
     parser: 'babel-eslint',

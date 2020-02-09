@@ -39,18 +39,8 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
 import Alert from '../alert'
-
-const USER_LOGIN = gql`
-  mutation Login($email: String!, $password: String!) {
-    login(email: $email, password: $password) {
-      status
-      message
-      id_token
-    }
-  }
-`
+import { USER_LOGIN } from '@/schemas/mutaion.js'
 
 export default {
   name: 'LoginForm',
@@ -111,7 +101,7 @@ export default {
           default: {
             this.alertShow = true
             this.color = 'error'
-            this.alertMessage = res.errors
+            this.alertMessage = res.message
             break
           }
         }
