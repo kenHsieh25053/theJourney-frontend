@@ -130,6 +130,66 @@ export const POST_TRAVELLISTPOST = gql`
     }
   }
 `
+export const _POST_TRAVELLISTPOST = gql`
+  mutation _travelListPost($input: TravelListPostInput!) {
+    _travelListPost(input: $input) {
+      status
+      message
+      travelLists {
+        id
+        name
+        tags
+        types
+        stayFrom
+        stayTo
+        days
+        costs
+        rates
+        likes
+        comments
+        permissions
+        transportation
+        review
+        countries
+        createdAt
+        updatedAt
+        userId
+        cities {
+          id
+          name
+          longtitude
+          latitude
+          stayFrom
+          stayTo
+          costs
+          rates
+          transportation
+          review
+          photo_url
+          createdAt
+          updatedAt
+          travelListId
+          touristSpots {
+            id
+            name
+            type
+            longtitude
+            latitude
+            days
+            costs
+            rates
+            transportation
+            review
+            photo_url
+            createdAt
+            updatedAt
+            cityId
+          }
+        }
+      }
+    }
+  }
+`
 
 export const POST_TRAVELLISTDELETE = gql`
   mutation travelListDelete($id: ID!) {

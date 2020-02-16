@@ -1,6 +1,6 @@
 <template>
   <v-form ref="form" v-model="isFormValid">
-    <v-container>
+    <v-container fill-height>
       <!-- add travellist -->
       <v-row>
         <v-col cols="12" md="4">
@@ -87,7 +87,7 @@
           </v-autocomplete>
         </v-col>
       </v-row>
-      <v-row>
+      <v-row class="pb-0">
         <v-col cols="12">
           <v-textarea
             v-model="travellistPost.review"
@@ -99,64 +99,122 @@
         </v-col>
       </v-row>
       <!-- add city  -->
-      <v-row v-for="(city, index) in cities" :key="index">
-        <v-layout align="center" justify="center">
-          <v-col cols="12" md="3" sm="3">
-            <v-text-field
-              v-model="city.cityName"
-              type="text"
-              label="城市名稱"
-              prepend-inner-icon="mdi-map"
-              solo
-              required
-            />
-          </v-col>
-          <v-col cols="12" md="4" sm="4">
-            <v-menu
-              ref="menu"
-              v-model="city.cityMenu"
-              :close-on-content-click="false"
-              transition="scale-transition"
-              offset-y
-              min-width="290px"
-            >
-              <template v-slot:activator="{ on }">
-                <v-text-field
-                  v-model="city.cityDates"
-                  prepend-inner-icon="mdi-calendar-text"
-                  label="日期"
-                  readonly
-                  solo
-                  v-on="on"
-                />
-              </template>
-              <v-date-picker
-                ref="picker"
-                locale="zh-cn"
-                v-model="city.cityDates"
-                range
+      <v-row
+        class="pb-0"
+        v-for="(city, index) in cities"
+        :key="index"
+        align-content="center"
+        justify="center"
+        dense
+      >
+        <v-col cols="12" md="3" sm="3">
+          <v-text-field
+            v-model="city.name"
+            type="text"
+            label="城市名稱"
+            prepend-inner-icon="mdi-city-variant-outline"
+            solo
+            required
+          />
+        </v-col>
+        <v-col cols="12" md="4" sm="4">
+          <v-menu
+            ref="menu"
+            v-model="city.cityMenu"
+            :close-on-content-click="false"
+            transition="scale-transition"
+            offset-y
+            min-width="290px"
+          >
+            <template v-slot:activator="{ on }">
+              <v-text-field
+                v-model="city.cityDateRange"
+                prepend-inner-icon="mdi-calendar-text"
+                label="日期"
+                readonly
+                solo
+                v-on="on"
               />
-            </v-menu>
-          </v-col>
-          <v-col cols="12" md="3" sm="3">
+            </template>
+            <v-date-picker
+              ref="picker"
+              locale="zh-cn"
+              v-model="city.cityDateRange"
+              range
+            />
+          </v-menu>
+        </v-col>
+        <v-col cols="12" md="3" sm="3">
+          <v-text-field
+            v-model.number="city.costs"
+            prepend-inner-icon="mdi-currency-usd"
+            type="number"
+            label="cost"
+            solo
+            required
+          />
+        </v-col>
+        <v-col cols="12" md="2" sm="2" class="pa-1">
+          <v-btn color="error" large @click="deleteRow('city', index)"
+            >刪除</v-btn
+          >
+        </v-col>
+        <!-- add touristSpots -->
+        <v-row
+          class="pb-0"
+          v-for="(touristSpot, index2) in city.touristSpots"
+          :key="index2"
+          align-content-md="center"
+          justify-md="center"
+          dense
+        >
+          <v-col cols="12" md="3">
             <v-text-field
-              v-model="city.touristSpots"
-              prepend-inner-icon="mdi-calendar-text"
+              v-model="touristSpot.name"
+              prepend-inner-icon="mdi-camera-plus-outline"
               type="text"
               value="''"
-              label="景點名稱"
+              label="Touristspots"
               solo
               required
             />
           </v-col>
-          <v-col cols="12" md="2" sm="2">
-            <v-btn color="error" large @click="deleteRow">刪除</v-btn>
+          <v-col cols="12" md="3">
+            <v-rating
+              v-model="touristSpot.rates"
+              background-color="orange lighten-3"
+              color="orange"
+              half-increments
+            ></v-rating>
           </v-col>
-        </v-layout>
+          <v-col cols="12" md="2">
+            <v-btn color="primary" rounded>
+              <v-icon>mdi-upload-multiple</v-icon>
+            </v-btn>
+          </v-col>
+          <v-col cols="12" md="4">
+            <v-btn
+              color="success"
+              fab
+              small
+              dark
+              @click="addRow('touristSpot', index)"
+              ><v-icon>mdi-plus-circle-outline</v-icon>
+            </v-btn>
+            <v-btn
+              color="error"
+              fab
+              small
+              dark
+              @click="deleteRow('touristSpot', index, index2)"
+              ><v-icon>mdi-close-circle-outline</v-icon>
+            </v-btn>
+          </v-col>
+        </v-row>
       </v-row>
       <v-row>
         <v-col cols="12" md="2" sm="2">
-          <v-btn color="success" large @click="addRow">新增城市</v-btn>
+          <v-btn color="success" large @click="addRow('city')">新增城市</v-btn>
         </v-col>
       </v-row>
       <v-row>
@@ -177,7 +235,7 @@
             dense
             :disabled="isDisabled"
             :loading="loading"
-            @click="submit"
+            @click="submitTravelListPost"
             >發佈</v-btn
           >
         </v-col>
@@ -195,7 +253,7 @@
 <script>
 import emojiFlags from 'emoji-flags'
 import Alert from '../alert'
-import { POST_TRAVELLISTPOST, POST_CITYPOST } from '@/schemas/mutaion.js'
+import { _POST_TRAVELLISTPOST, POST_CITYPOST } from '@/schemas/mutaion.js'
 
 export default {
   name: 'TravelListPostForm',
@@ -211,13 +269,14 @@ export default {
     alignment: 'center',
     // travellistpost form
     travellistPost: {
-      id: null,
       name: '',
       types: '',
       countries: [],
       review: '',
       permissions: 'PUBLIC'
     },
+    travelListId: '',
+    cityId: '',
     typeItems: [
       { text: '背包客', value: 'BACKPACK' },
       { text: '商務旅行', value: 'BUSSINESSTRIP' },
@@ -236,12 +295,19 @@ export default {
     // city form
     cities: [
       {
-        cityName: '',
-        cityDates: [],
-        touristSpots: []
+        name: '',
+        cityDateRange: [],
+        costs: 0,
+        touristSpots: [
+          {
+            name: '',
+            rates: 0
+          }
+        ]
       }
     ],
     cityCounter: 0,
+    touristSpotCounter: 0,
     // alert props
     color: '',
     alertShow: false,
@@ -252,7 +318,7 @@ export default {
       return this.dates.join(' ~ ')
     },
     cityDateRangeText(index) {
-      return this.cities[index].cityDates.join(' ~ ')
+      return this.cities[index].cityDateRange.join(' ~ ')
     },
     isDisabled() {
       const isEmpty = Object.values(this.travellistPost)
@@ -263,16 +329,29 @@ export default {
     this.countryInfo()
   },
   methods: {
-    async submit() {
+    async submitTravelListPost() {
+      this.cities.forEach(city => {
+        Object.assign(city, {
+          stayFrom: city.cityDateRange[0],
+          stayTo: city.cityDateRange[1]
+        })
+        delete city['cityDateRange']
+        delete city['cityMenu']
+      })
+
       const travellist = Object.assign(this.travellistPost, {
         stayFrom: this.dates[0],
         stayTo: this.dates[1]
       })
+      travellist.cities = this.cities
+      console.log(travellist)
       this.loading = true
       try {
         const res = await this.$apollo.mutate({
-          mutation: POST_TRAVELLISTPOST,
-          variables: travellist
+          mutation: _POST_TRAVELLISTPOST,
+          variables: {
+            input: travellist
+          }
         })
         const status = res.data.travelListPost.status
         switch (status) {
@@ -309,9 +388,64 @@ export default {
     },
     async submitCities() {
       try {
+        cities.forEach(city => {
+          Object.assign(this.city, {
+            stayFrom: city.cityDateRange[0],
+            stayTo: city.cityDateRange[1]
+          })
+          delete city['cityDateRange']
+        })
         const res = await this.$apollo.mutate({
           mutation: POST_CITYPOST,
-          variables: travellist
+          variables: cities
+        })
+        const status = res.data.cityPost.status
+        switch (status) {
+          case '200': {
+            const cityId = res.data.cityPost.id
+            console.log(res.data.cityPost)
+            this.submitTravelSpots()
+            break
+          }
+          case '403': {
+            this.alertShow = true
+            this.color = 'warning'
+            this.alertMessage = res.data.cityPost.message
+            break
+          }
+          case '500': {
+            this.alertShow = true
+            this.color = 'error'
+            this.alertMessage = res.data.cityPost.message
+            break
+          }
+          default: {
+            this.alertShow = true
+            this.color = 'error'
+            this.alertMessage = res.data.errors
+            break
+          }
+        }
+      } catch (err) {
+        console.log(err)
+        this.alertShow = true
+        this.color = 'error'
+        this.alertMessage = err
+      }
+    },
+    async submitTravelSpots() {
+      try {
+        cities.forEach(city => {
+          Object.assign(this.city, {
+            stayFrom: city.cityDateRange[0],
+            stayTo: city.cityDateRange[1],
+            cityId: this.travelListId
+          })
+          delete city['cityDateRange']
+        })
+        const res = await this.$apollo.mutate({
+          mutation: POST_TOURISTSPOTPOST,
+          variables: cities
         })
         const status = res.data.cityPost.status
         switch (status) {
@@ -356,17 +490,48 @@ export default {
       const index = this.friends.indexOf(item.name)
       if (index >= 0) this.friends.splice(index, 1)
     },
-    addRow() {
-      this.cityCounter += 1
-      this.cities.push({
-        cityName: '',
-        cityDates: [],
-        touristSpots: []
-      })
+    addRow(type, index) {
+      switch (type) {
+        case 'city': {
+          this.cities.push({
+            name: '',
+            cityDateRange: [],
+            touristSpots: [
+              {
+                name: '',
+                rates: 0
+              }
+            ]
+          })
+          break
+        }
+        case 'touristSpot': {
+          this.cities[index].touristSpots.push({
+            name: '',
+            rates: 0
+          })
+          break
+        }
+      }
     },
-    deleteRow() {
-      if (this.cities.length > 1) {
-        this.cities.pop()
+    deleteRow(type, index, index2) {
+      switch (type) {
+        case 'city': {
+          if (this.cities.length > 1) {
+            if (index > -1) {
+              this.cities.splice(index, 1)
+            }
+          }
+          break
+        }
+        case 'touristSpot': {
+          if (this.cities[index].touristSpots.length > 1) {
+            if (index > -1) {
+              this.cities[index].touristSpots.splice(index2, 1)
+            }
+          }
+          break
+        }
       }
     },
     cityDateRangePicker(i) {
