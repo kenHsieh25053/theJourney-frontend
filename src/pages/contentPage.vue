@@ -1,7 +1,7 @@
 <template>
   <div>
     <content-nav-bar />
-    <v-container fluid>
+    <v-container>
       <v-row>
         <v-col cols="12" sm="8" md="8">
           <v-col cols="12">

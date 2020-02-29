@@ -3,7 +3,7 @@
     <v-container fill-height>
       <!-- add travellist -->
       <v-row>
-        <v-col cols="12" md="4">
+        <v-col cols="12" md="3">
           <v-text-field
             v-model="travellistPost.name"
             type="text"
@@ -13,7 +13,7 @@
             required
           />
         </v-col>
-        <v-col cols="12" md="4">
+        <v-col cols="12" md="3">
           <v-select
             v-model="travellistPost.types"
             :items="typeItems"
@@ -23,26 +23,55 @@
             solo
           />
         </v-col>
-        <v-col cols="12" md="4">
+        <v-col cols="12" md="3">
           <v-menu
-            ref="menu"
-            v-model="menu"
+            v-model="start_date_menu"
             :close-on-content-click="false"
+            :nudge-right="40"
             transition="scale-transition"
             offset-y
             min-width="290px"
           >
             <template v-slot:activator="{ on }">
               <v-text-field
-                v-model="dateRangeText"
-                label="日期"
+                v-model="travellistPost.stayFrom"
+                label="From"
                 prepend-inner-icon="mdi-calendar-text"
                 readonly
-                solo
                 v-on="on"
-              />
+                solo
+              ></v-text-field>
             </template>
-            <v-date-picker ref="picker" v-model="dates" locale="zh-cn" range />
+            <v-date-picker
+              v-model="travellistPost.stayFrom"
+              @input="start_date_menu = false"
+            ></v-date-picker>
+          </v-menu>
+        </v-col>
+        <v-col cols="12" md="3">
+          <v-menu
+            v-model="end_date_menu"
+            :close-on-content-click="false"
+            :nudge-right="40"
+            transition="scale-transition"
+            offset-y
+            min-width="290px"
+          >
+            <template v-slot:activator="{ on }">
+              <v-text-field
+                v-model="travellistPost.stayTo"
+                label="To"
+                prepend-inner-icon="mdi-calendar-text"
+                :allowed-dates="allowedDates"
+                readonly
+                v-on="on"
+                solo
+              ></v-text-field>
+            </template>
+            <v-date-picker
+              v-model="travellistPost.stayTo"
+              @input="end_date_menu = false"
+            ></v-date-picker>
           </v-menu>
         </v-col>
       </v-row>
@@ -99,122 +128,158 @@
         </v-col>
       </v-row>
       <!-- add city  -->
-      <v-row
-        class="pb-0"
-        v-for="(city, index) in cities"
-        :key="index"
-        align-content="center"
-        justify="center"
-        dense
-      >
-        <v-col cols="12" md="3" sm="3">
-          <v-text-field
-            v-model="city.name"
-            type="text"
-            label="城市名稱"
-            prepend-inner-icon="mdi-city-variant-outline"
-            solo
-            required
-          />
-        </v-col>
-        <v-col cols="12" md="4" sm="4">
-          <v-menu
-            ref="menu"
-            v-model="city.cityMenu"
-            :close-on-content-click="false"
-            transition="scale-transition"
-            offset-y
-            min-width="290px"
-          >
-            <template v-slot:activator="{ on }">
+      <v-row v-for="(city, index) in cities" :key="index">
+        <v-col cols="12">
+          <v-toolbar dense>
+            <v-toolbar-items>
               <v-text-field
-                v-model="city.cityDateRange"
-                prepend-inner-icon="mdi-calendar-text"
-                label="日期"
-                readonly
+                v-model="city.name"
+                type="text"
+                label="城市名稱"
+                prepend-inner-icon="mdi-city-variant-outline"
                 solo
-                v-on="on"
+                flat
+                required
               />
-            </template>
-            <v-date-picker
-              ref="picker"
-              locale="zh-cn"
-              v-model="city.cityDateRange"
-              range
-            />
-          </v-menu>
-        </v-col>
-        <v-col cols="12" md="3" sm="3">
-          <v-text-field
-            v-model.number="city.costs"
-            prepend-inner-icon="mdi-currency-usd"
-            type="number"
-            label="cost"
-            solo
-            required
-          />
-        </v-col>
-        <v-col cols="12" md="2" sm="2" class="pa-1">
-          <v-btn color="error" large @click="deleteRow('city', index)"
-            >刪除</v-btn
-          >
+            </v-toolbar-items>
+            <v-toolbar-items>
+              <v-menu
+                v-model="city.start_date_menu_city"
+                :close-on-content-click="false"
+                :nudge-right="40"
+                transition="scale-transition"
+                offset-y
+                min-width="290px"
+              >
+                <template v-slot:activator="{ on }">
+                  <v-text-field
+                    v-model="city.stayFrom"
+                    label="From"
+                    prepend-inner-icon="mdi-calendar-text"
+                    readonly
+                    v-on="on"
+                    solo
+                    flat
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                  v-model="city.stayFrom"
+                  @input="start_date_menu = false"
+                ></v-date-picker>
+              </v-menu>
+            </v-toolbar-items>
+            <v-toolbar-items>
+              <v-menu
+                v-model="city.end_date_menu_city"
+                :close-on-content-click="false"
+                :nudge-right="40"
+                transition="scale-transition"
+                offset-y
+                min-width="290px"
+              >
+                <template v-slot:activator="{ on }">
+                  <v-text-field
+                    v-model="city.stayTo"
+                    label="To"
+                    prepend-inner-icon="mdi-calendar-text"
+                    readonly
+                    v-on="on"
+                    solo
+                    flat
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                  v-model="city.stayTo"
+                  @input="end_date_menu = false"
+                ></v-date-picker>
+              </v-menu>
+            </v-toolbar-items>
+            <v-toolbar-items>
+              <v-text-field
+                v-model.number="city.costs"
+                prepend-inner-icon="mdi-currency-usd"
+                type="number"
+                label="cost"
+                solo
+                flat
+                required
+              />
+            </v-toolbar-items>
+            <v-spacer></v-spacer>
+            <v-toolbar-items>
+              <v-btn color="error" @click="deleteRow('city', index)" text>
+                <v-icon>mdi-close-circle-outline</v-icon>
+              </v-btn>
+            </v-toolbar-items>
+          </v-toolbar>
         </v-col>
         <!-- add touristSpots -->
-        <v-row
-          class="pb-0"
-          v-for="(touristSpot, index2) in city.touristSpots"
-          :key="index2"
-          align-content-md="center"
-          justify-md="center"
-          dense
-        >
-          <v-col cols="12" md="3">
-            <v-text-field
-              v-model="touristSpot.name"
-              prepend-inner-icon="mdi-camera-plus-outline"
-              type="text"
-              value="''"
-              label="Touristspots"
-              solo
-              required
-            />
-          </v-col>
-          <v-col cols="12" md="3">
-            <v-rating
-              v-model="touristSpot.rates"
-              background-color="orange lighten-3"
-              color="orange"
-              half-increments
-            ></v-rating>
-          </v-col>
-          <v-col cols="12" md="2">
-            <v-btn color="primary" rounded>
-              <v-icon>mdi-upload-multiple</v-icon>
-            </v-btn>
-          </v-col>
-          <v-col cols="12" md="4">
-            <v-btn
-              color="success"
-              fab
-              small
-              dark
-              @click="addRow('touristSpot', index)"
-              ><v-icon>mdi-plus-circle-outline</v-icon>
-            </v-btn>
-            <v-btn
-              color="error"
-              fab
-              small
-              dark
-              @click="deleteRow('touristSpot', index, index2)"
-              ><v-icon>mdi-close-circle-outline</v-icon>
-            </v-btn>
-          </v-col>
-        </v-row>
+        <v-container>
+          <v-row
+            v-for="(touristSpot, index2) in city.touristSpots"
+            :key="index2"
+            align-content-md="center"
+            justify-md="center"
+          >
+            <v-col cols="12">
+              <v-toolbar dense>
+                <v-toolbar-items>
+                  <v-btn
+                    color="success"
+                    fab
+                    small
+                    dark
+                    text
+                    @click="addRow('touristSpot', index)"
+                    ><v-icon>mdi-plus-circle-outline</v-icon>
+                  </v-btn>
+                </v-toolbar-items>
+                <v-toolbar-items>
+                  <v-text-field
+                    v-model="touristSpot.name"
+                    prepend-inner-icon="mdi-camera-plus-outline"
+                    type="text"
+                    value="''"
+                    label="景點"
+                    solo
+                    flat
+                    required
+                  />
+                </v-toolbar-items>
+                <v-toolbar-items>
+                  <v-rating
+                    v-model="touristSpot.rates"
+                    background-color="orange lighten-3"
+                    color="orange"
+                    half-increments
+                  ></v-rating>
+                </v-toolbar-items>
+                <v-spacer></v-spacer>
+                <v-toolbar-items>
+                  <v-btn color="primary" text>
+                    <v-icon>mdi-upload-multiple</v-icon>
+                  </v-btn>
+                </v-toolbar-items>
+                <v-spacer></v-spacer>
+                <v-toolbar-items>
+                  <v-btn
+                    color="error"
+                    fab
+                    small
+                    dark
+                    text
+                    @click="deleteRow('touristSpot', index, index2)"
+                    ><v-icon>mdi-close-circle-outline</v-icon>
+                  </v-btn>
+                </v-toolbar-items>
+              </v-toolbar>
+            </v-col>
+          </v-row>
+        </v-container>
       </v-row>
       <v-row>
         <v-col cols="12" md="2" sm="2">
-          <v-btn color="success" large @click="addRow('city')">新增城市</v-btn>
+          <v-btn color="success" @click="addRow('city')" dense>新增城市</v-btn>
         </v-col>
       </v-row>
       <v-row>
@@ -253,7 +318,7 @@
 <script>
 import emojiFlags from 'emoji-flags'
 import Alert from '../alert'
-import { _POST_TRAVELLISTPOST, POST_CITYPOST } from '@/schemas/mutaion.js'
+import { POST_TRAVELLISTPOST } from '@/schemas/mutaion.js'
 
 export default {
   name: 'TravelListPostForm',
@@ -269,8 +334,11 @@ export default {
     alignment: 'center',
     // travellistpost form
     travellistPost: {
+      id: '',
       name: '',
       types: '',
+      stayFrom: new Date().toISOString().substr(0, 10),
+      stayTo: new Date().toISOString().substr(0, 10),
       countries: [],
       review: '',
       permissions: 'PUBLIC'
@@ -283,7 +351,9 @@ export default {
       { text: '家族旅遊', value: 'FAMILYTRIP' },
       { text: '跟團', value: 'TOURGROUP' }
     ],
-    dates: [],
+    start_date_menu: false,
+    end_date_menu: false,
+    datesTo: [],
     permissionItems: [
       { text: '公開', value: 'PUBLIC' },
       { text: '僅限好友', value: 'FRIENDONLY' },
@@ -295,13 +365,21 @@ export default {
     // city form
     cities: [
       {
+        id: '',
         name: '',
-        cityDateRange: [],
+        stayFrom: new Date().toISOString().substr(0, 10),
+        stayTo: new Date().toISOString().substr(0, 10),
         costs: 0,
+        travelListId: '',
+        start_date_menu_city: false,
+        end_date_menu_city: false,
         touristSpots: [
           {
+            id: '',
             name: '',
-            rates: 0
+            rates: 0,
+            photo_url: '',
+            cityId: ''
           }
         ]
       }
@@ -314,12 +392,6 @@ export default {
     alertMessage: ''
   }),
   computed: {
-    dateRangeText() {
-      return this.dates.join(' ~ ')
-    },
-    cityDateRangeText(index) {
-      return this.cities[index].cityDateRange.join(' ~ ')
-    },
     isDisabled() {
       const isEmpty = Object.values(this.travellistPost)
       return isEmpty.includes('')
@@ -331,31 +403,23 @@ export default {
   methods: {
     async submitTravelListPost() {
       this.cities.forEach(city => {
-        Object.assign(city, {
-          stayFrom: city.cityDateRange[0],
-          stayTo: city.cityDateRange[1]
-        })
-        delete city['cityDateRange']
-        delete city['cityMenu']
+        delete city.start_date_menu_city
+        delete city.end_date_menu_city
       })
-
-      const travellist = Object.assign(this.travellistPost, {
-        stayFrom: this.dates[0],
-        stayTo: this.dates[1]
-      })
-      travellist.cities = this.cities
-      console.log(travellist)
+      this.travellistPost.cities = this.cities
+      console.log(this.travellistPost)
       this.loading = true
       try {
         const res = await this.$apollo.mutate({
-          mutation: _POST_TRAVELLISTPOST,
+          mutation: POST_TRAVELLISTPOST,
           variables: {
-            input: travellist
+            input: this.travellistPost
           }
         })
         const status = res.data.travelListPost.status
         switch (status) {
           case '200': {
+            console.log('from backend')
             console.log(res.data.travelListPost)
             break
           }
@@ -386,99 +450,6 @@ export default {
       }
       this.loading = false
     },
-    async submitCities() {
-      try {
-        cities.forEach(city => {
-          Object.assign(this.city, {
-            stayFrom: city.cityDateRange[0],
-            stayTo: city.cityDateRange[1]
-          })
-          delete city['cityDateRange']
-        })
-        const res = await this.$apollo.mutate({
-          mutation: POST_CITYPOST,
-          variables: cities
-        })
-        const status = res.data.cityPost.status
-        switch (status) {
-          case '200': {
-            const cityId = res.data.cityPost.id
-            console.log(res.data.cityPost)
-            this.submitTravelSpots()
-            break
-          }
-          case '403': {
-            this.alertShow = true
-            this.color = 'warning'
-            this.alertMessage = res.data.cityPost.message
-            break
-          }
-          case '500': {
-            this.alertShow = true
-            this.color = 'error'
-            this.alertMessage = res.data.cityPost.message
-            break
-          }
-          default: {
-            this.alertShow = true
-            this.color = 'error'
-            this.alertMessage = res.data.errors
-            break
-          }
-        }
-      } catch (err) {
-        console.log(err)
-        this.alertShow = true
-        this.color = 'error'
-        this.alertMessage = err
-      }
-    },
-    async submitTravelSpots() {
-      try {
-        cities.forEach(city => {
-          Object.assign(this.city, {
-            stayFrom: city.cityDateRange[0],
-            stayTo: city.cityDateRange[1],
-            cityId: this.travelListId
-          })
-          delete city['cityDateRange']
-        })
-        const res = await this.$apollo.mutate({
-          mutation: POST_TOURISTSPOTPOST,
-          variables: cities
-        })
-        const status = res.data.cityPost.status
-        switch (status) {
-          case '200': {
-            console.log(res.data.cityPost)
-            break
-          }
-          case '403': {
-            this.alertShow = true
-            this.color = 'warning'
-            this.alertMessage = res.data.cityPost.message
-            break
-          }
-          case '500': {
-            this.alertShow = true
-            this.color = 'error'
-            this.alertMessage = res.data.cityPost.message
-            break
-          }
-          default: {
-            this.alertShow = true
-            this.color = 'error'
-            this.alertMessage = res.data.errors
-            break
-          }
-        }
-      } catch (err) {
-        console.log(err)
-        this.alertShow = true
-        this.color = 'error'
-        this.alertMessage = err
-      }
-    },
     closeSnackbar(close) {
       // send new status to prop
       this.alertShow = close
@@ -487,17 +458,18 @@ export default {
       this.countryItems = emojiFlags.data
     },
     remove(item) {
-      const index = this.friends.indexOf(item.name)
-      if (index >= 0) this.friends.splice(index, 1)
+      const index = this.travellistPost.countries.indexOf(item.name)
+      if (index >= 0) this.travellistPost.countries.splice(index, 1)
     },
     addRow(type, index) {
       switch (type) {
         case 'city': {
           this.cities.push({
+            id: '',
             name: '',
-            cityDateRange: [],
             touristSpots: [
               {
+                id: '',
                 name: '',
                 rates: 0
               }
@@ -507,6 +479,7 @@ export default {
         }
         case 'touristSpot': {
           this.cities[index].touristSpots.push({
+            id: '',
             name: '',
             rates: 0
           })
@@ -534,8 +507,13 @@ export default {
         }
       }
     },
-    cityDateRangePicker(i) {
-      console.log(i)
+    allowedDates(val) {
+      // val > from
+      // console.log(val.travellistPost.stayFrom)
+      // const from = parseInt(val.travellistPost.stayFrom.split('-').join(''))
+
+      // console.log(parseInt(val.travellistPost.stayFrom.split('-').join('')))
+      return val.travellistPost.stayFrom
     }
   }
 }
