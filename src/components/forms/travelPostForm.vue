@@ -62,7 +62,6 @@
                 v-model="travellistPost.stayTo"
                 label="To"
                 prepend-inner-icon="mdi-calendar-text"
-                :allowed-dates="allowedDates"
                 readonly
                 v-on="on"
                 solo
@@ -70,6 +69,7 @@
             </template>
             <v-date-picker
               v-model="travellistPost.stayTo"
+              v-on="dateTimeChecker"
               @input="end_date_menu = false"
             ></v-date-picker>
           </v-menu>
@@ -128,7 +128,7 @@
         </v-col>
       </v-row>
       <!-- add city  -->
-      <v-row v-for="(city, index) in cities" :key="index">
+      <v-row v-for="(city, index) in cities" :key="index" justify="center">
         <v-col cols="12">
           <v-toolbar dense>
             <v-toolbar-items>
@@ -207,7 +207,12 @@
             </v-toolbar-items>
             <v-spacer></v-spacer>
             <v-toolbar-items>
-              <v-btn color="error" @click="deleteRow('city', index)" text>
+              <v-btn
+                color="error"
+                @click="deleteRow('city', index)"
+                text
+                class="text-right"
+              >
                 <v-icon>mdi-close-circle-outline</v-icon>
               </v-btn>
             </v-toolbar-items>
@@ -218,8 +223,7 @@
           <v-row
             v-for="(touristSpot, index2) in city.touristSpots"
             :key="index2"
-            align-content-md="center"
-            justify-md="center"
+            justify="center"
           >
             <v-col cols="12">
               <v-toolbar dense>
@@ -395,6 +399,20 @@ export default {
     isDisabled() {
       const isEmpty = Object.values(this.travellistPost)
       return isEmpty.includes('')
+    },
+    dateTimeChecker(val) {
+      const from = parseInt(val.travellistPost.stayFrom.split('-').join(''))
+      const to = parseInt(val.travellistPost.stayTo.split('-').join(''))
+      if (from > to) {
+        this.travellistPost.stayFrom = val.travellistPost.stayTo
+      }
+    },
+    cityDateTimeChecker(val) {
+      const cityFrom = parseInt(val.cities.stayFrom.split('-').join(''))
+      const cityTo = parseInt(val.cities.stayTo.split('-').join(''))
+      if (cityFrom > cityTo) {
+        this.cities.stayFrom = val.cities.stayTo
+      }
     }
   },
   mounted() {
@@ -506,14 +524,6 @@ export default {
           break
         }
       }
-    },
-    allowedDates(val) {
-      // val > from
-      // console.log(val.travellistPost.stayFrom)
-      // const from = parseInt(val.travellistPost.stayFrom.split('-').join(''))
-
-      // console.log(parseInt(val.travellistPost.stayFrom.split('-').join('')))
-      return val.travellistPost.stayFrom
     }
   }
 }
