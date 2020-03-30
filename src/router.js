@@ -7,7 +7,8 @@ import ContentPage from './pages/contentPage.vue'
 
 Vue.use(VueRouter)
 
-export default new VueRouter({
+const router = new VueRouter({
+  mode: 'history',
   routes: [
     {
       path: '/',
@@ -17,7 +18,27 @@ export default new VueRouter({
     {
       path: '/content',
       name: 'Content',
-      component: ContentPage
+      component: ContentPage,
+      meta: {
+        requiresAuth: true
+      }
     }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (localStorage.getItem('id_token') === null) {
+      next({
+        path: '/',
+        params: { nextUrl: to.fullPath }
+      })
+    } else {
+      next()
+    }
+  } else {
+    next()
+  }
+})
+
+export default router

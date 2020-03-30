@@ -65,74 +65,8 @@ Travellist, city, touristspots
 */
 
 export const POST_TRAVELLISTPOST = gql`
-  mutation travelListPost(
-    $id: ID
-    $name: String!
-    $tags: [String]
-    $type: String
-    $stayFrom: String!
-    $stayTo: String!
-    $transportation: String
-    $review: String
-    $countries: [String]
-    $permissions: String!
-  ) {
-    travelListPost(
-      id: $id
-      name: $name
-      tags: $tags
-      type: $type
-      stayFrom: $stayFrom
-      stayTo: $stayTo
-      transportation: $transportation
-      review: $review
-      countries: $countries
-      permissions: $permissions
-    ) {
-      status
-      message
-      travellists {
-        id
-        name
-        tags
-        type
-        stayFrom
-        stayTo
-        days
-        costs
-        rates
-        likes
-        comments
-        permissions
-        transportation
-        review
-        countries
-        createdAt
-        updatedAt
-        userId
-        cities {
-          id
-          name
-          longtitude
-          latitude
-          stayFrom
-          stayTo
-          costs
-          rates
-          transportation
-          review
-          photo_url
-          createdAt
-          updatedAt
-          travelListId
-        }
-      }
-    }
-  }
-`
-export const _POST_TRAVELLISTPOST = gql`
-  mutation _travelListPost($input: TravelListPostInput!) {
-    _travelListPost(input: $input) {
+  mutation travelListPost($input: TravelListPostInput!) {
+    travelListPost(input: $input) {
       status
       message
       travelLists {
@@ -147,17 +81,17 @@ export const _POST_TRAVELLISTPOST = gql`
         rates
         likes
         comments
-        permissions
         transportation
         review
         countries
+        permissions
         createdAt
         updatedAt
         userId
         cities {
           id
           name
-          longtitude
+          longitude
           latitude
           stayFrom
           stayTo
@@ -173,7 +107,7 @@ export const _POST_TRAVELLISTPOST = gql`
             id
             name
             type
-            longtitude
+            longitude
             latitude
             days
             costs

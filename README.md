@@ -1,5 +1,13 @@
 # thejoureny-frontend
 
+## Introduction
+A frontend for the travel social media "theJoureny", which can let user share their travel experience with their friends.
+
+### User can
++ create a travel list with cites and tourist spots.
++ upload tourist spots images.
++ like, comment and share others' travel list.
+
 ## Project setup
 ```
 npm install
@@ -24,7 +32,3 @@ npm run test
 ```
 npm run lint
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
-# theJourney-frontend

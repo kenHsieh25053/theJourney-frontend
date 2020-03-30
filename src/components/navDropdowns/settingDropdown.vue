@@ -32,7 +32,7 @@ export default {
   }),
   methods: {
     logout() {
-      localStorage.setItem('id_token', '')
+      localStorage.removeItem('id_token')
       this.$router.replace('/').catch(err => {
         console.log(err)
       })
