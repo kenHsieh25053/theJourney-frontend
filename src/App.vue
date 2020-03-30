@@ -6,14 +6,6 @@
 
 <script>
 export default {
-  name: 'App',
-  watch: {
-    $route(to, from) {
-      const idToken = localStorage.getItem('id_token')
-      if (!idToken) {
-        this.$router.replace('/')
-      }
-    }
-  }
+  name: 'App'
 }
 </script>
